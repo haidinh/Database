@@ -73,8 +73,12 @@ create table tblProduct
 	MachineSize varchar(50),
 	[Weight] float,
 	Picture varchar(100),
+	FrequentlyViewed int,
+	UnitPrice money,
+	AddedDate Date DEFAULT getdate(),
 	[ExtraDescription] varchar(300),-- more details of this product
 )
+
 
 --	SELECT
 select * from tblCareerer
@@ -85,7 +89,8 @@ select * from tblCategory
 select * from tblEmailGuest
 select * from tblGuestFeedBack
 
-
+--update  tblProduct set Picture=''
+--where ProductID=1
 -- INSERT
 -- admin
 insert into tblAdmin values('Admin1','1234')
@@ -117,7 +122,29 @@ insert into tblProduct(CategoryID,ProductName,[Output],MadeGoodsSize,MachineSize
 
 GO
 -- STORED PROCEDURE
-CREATE PROCEDURE sp_InsertPicture @Picture varchar(100),@ProductName varchar(100)
-AS
-UPDATE tblProduct SET Picture=@Picture WHERE ProductName=@ProductName
+--CREATE PROCEDURE sp_InsertPicture @Picture varchar(100),@ProductName varchar(100)
+--AS
+--UPDATE tblProduct SET Picture=@Picture WHERE ProductName=@ProductName
 GO
+-- Stored procedure for get all category
+CREATE PROCEDURE sp_getAllCategory
+AS
+SELECT * from tblCategory
+GO
+exec sp_getAllCategory
+go
+-- Stored procedure for get products viewed most frequently
+CREATE PROC sp_GetProductByFrequentlyViewed
+AS
+select TOP 6[ProductName],[Output],MadeGoodsSize,MachineSize,[Weight], [UnitPrice],[Picture],FrequentlyViewed,ProductID,[ExtraDescription] from dbo.tblProduct order by FrequentlyViewed DESC
+GO
+
+exec sp_GetProductByFrequentlyViewed
+go
+
+CREATE PROC sp_GetProductByAddedDate 
+AS
+select TOP 3[ProductName],[Output],MadeGoodsSize,MachineSize,[Weight], [UnitPrice],[Picture],FrequentlyViewed,ProductID,[ExtraDescription] from dbo.tblProduct order by AddedDate DESC
+GO
+exec sp_GetProductByAddedDate
+go
