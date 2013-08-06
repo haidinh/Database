@@ -21,6 +21,8 @@ create table tblAdmin
 	AdminID int identity(1,1) primary key,
 	UserName varchar(20),
 	[Password] varchar(20),	
+	Email varchar(100),
+	Name nvarchar(100)
 )
 create table tblEmail2Careerer -- the table holds info that admin had sent to Careerer
 (
@@ -86,7 +88,6 @@ select * from tblAdmin
 select * from tblEmail2Careerer
 select * from tblProduct
 select * from tblCategory
-select * from tblEmailGuest
 select * from tblGuestFeedBack
 
 --update  tblProduct set Picture=''
@@ -148,3 +149,175 @@ select TOP 3[ProductName],[Output],MadeGoodsSize,MachineSize,[Weight], [UnitPric
 GO
 exec sp_GetProductByAddedDate
 go
+
+-- procduce Admin
+Create Proc sp_AdminSelectAll 
+AS
+BEGIN
+	SELECT * FROM tblAdmin
+END
+Go
+
+CREATE PROC sp_AdminSelectById
+	@AdminID int
+AS
+BEGIN
+	SELECT * FROM tblAdmin WHERE [AdminID] = @AdminID
+END
+GO
+
+CREATE PROC sp_AdminCheckLogin
+	@Username nvarchar(20),
+	@Password nvarchar(20)
+AS
+BEGIN
+	SELECT * FROM tblAdmin Where [UserName] = @Username and [Password] = @Password
+END
+GO
+
+Create Proc sp_AdminInsert
+	@Username nvarchar(20),
+	@Password nvarchar(20),
+	@Email varchar(100),
+	@Name nvarchar(50)
+AS
+BEGIN
+	Insert into tblAdmin values (@Username,@Password,@Email,@Name) 
+END
+GO
+
+Create Proc sp_AdminChangePassword
+	@AdminID int,
+	@Password varchar(20),
+	@NewPassword varchar(20)
+AS
+BEGIN
+	Update tblAdmin set [Password] = @NewPassword where [AdminID] = @AdminID and [Password] = @Password
+END
+Go
+
+Create Proc sp_AdminUpdateProfile
+	@AdminID int,
+	@Email varchar(100),
+	@Name nvarchar(50)
+AS
+Begin
+	Update tblAdmin set [Email] = @Email,[Name]=@Name where [AdminID] = @AdminID
+End
+go
+-- procduce Category
+Create Proc sp_CategorySelectAll 
+AS
+BEGIN
+	SELECT * FROM tblCategory
+END
+Go
+
+Create Proc sp_CategorySelectByID
+	@CategoryId int
+AS
+BEGIN
+	SELECT * FROM tblCategory WHERE [CategoryID] = @CategoryId
+END
+go
+
+Create Proc sp_CategoryInsert
+	@Category nvarchar(50)	
+AS
+BEGIN
+	Insert into tblCategory values (@Category) 
+END
+GO
+
+Create Proc sp_CategoryUpdate
+	@CategoryName nvarchar(50),
+	@CategoryID int
+AS
+BEGIN
+	Update tblCategory set CategoryName = @CategoryName where CategoryID = @CategoryID
+END
+Go
+
+Create proc sp_CategoryDelete
+	@CategoryId int
+AS
+BEGIN
+	Delete from tblCategory where CategoryID=@CategoryId
+END
+GO	
+
+-- procduce tblCareerer
+Create proc sp_CareererSelectAll
+As
+Begin
+	Select * from [tblCareerer]
+end
+go
+
+CREATE PROC sp_CareererSelectByID
+	@CareererID int
+AS
+BEGIN
+	SELECT * FROM [tblCareerer] WHERE [CareererID] = @CareererID
+END
+GO
+
+CREATE PROC sp_CareererCheckLogin
+	@EmailAddress nvarchar(100),
+	@Password nvarchar(20)
+AS
+BEGIN
+	SELECT * FROM tblCareerer Where [EmailAddress] = @EmailAddress and [Password] = @Password
+END
+GO
+
+CREATE PROC sp_CareererInsert
+	@EmailAddress varchar(100),
+	@Password varchar(20),
+	@FullName varchar(100),
+	@Age int,
+	@Gender bit,
+	@Address varchar(50),
+	@City varchar(50),
+	@Nation varchar(50),
+	@CV varchar(100)
+AS
+Begin
+	Insert into tblCareerer values (@EmailAddress,@Password,@FullName,@Age,@Gender,@Address,@City,@Nation,@CV)
+End
+GO
+
+Create PROC sp_CareererChangePassword
+	@CareererID int,
+	@EmailAddress varchar(100),
+	@Password varchar(20),
+	@Newpassword varchar(20)
+AS
+BEGIN
+	Update tblCareerer set [Password]= @NewPassword where EmailAddress = @EmailAddress and [Password] = @Password and CareererID = @CareererID
+END
+GO
+
+Create PROC sp_CareererUpdateProfile
+	@CareererID int,
+	@FullName varchar(100),
+	@Age int,
+	@Gender bit,
+	@Address varchar(50),
+	@City varchar(50),
+	@Nation varchar(50)
+AS
+BEGIN
+	Update tblCareerer set [FullName] = @FullName,[Age] = @Age,[Gender] = @Gender,[Address] = @Address,[City] = @City,[Nation]=@Nation where [CareererID] = @CareererID
+	
+END
+GO
+
+CREATE PROC sp_CareererUploadCV
+	@CV nvarchar(100)
+AS
+BEGIN
+	Update tblCareerer set [CV] = @CV
+END
+GO
+	
